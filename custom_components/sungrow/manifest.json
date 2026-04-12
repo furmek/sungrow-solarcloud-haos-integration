@@ -1,6 +1,6 @@
 {
   "domain": "sungrow",
-  "name": "Sungrow Inverter",
+  "name": "Sungrow iSolarCloud HAOS",
   "codeowners": ["@Cyber40014"],
   "config_flow": true,
   "dependencies": [],
