@@ -1,0 +1,89 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sungrow — Verbindungsmodus",
+        "description": "Verbindungsart zum Sungrow-Wechselrichter wählen.\n\n**Beide** (empfohlen): iSolarCloud API für historische Daten und Modbus für Echtzeitwerte.\n**Nur API**: Nur Cloud, kein lokaler Netzwerkzugang nötig.\n**Nur Modbus**: Nur LAN, kein Cloud-Konto nötig.",
+        "data": {
+          "mode": "Verbindungsmodus"
+        }
+      },
+      "api_credentials": {
+        "title": "iSolarCloud API-Zugangsdaten",
+        "description": "iSolarCloud OAuth2-App-Zugangsdaten eingeben. Registrierung unter [{portal_url}]({portal_url}) (Freigabe dauert ca. 1–2 Tage).",
+        "data": {
+          "server": "Serverregion",
+          "app_key": "App Key",
+          "app_secret": "App Secret",
+          "application_id": "Application ID",
+          "redirect_uri": "Redirect URI",
+          "api_scan_interval": "API-Abfrageintervall (Sekunden)"
+        }
+      },
+      "api_authorize": {
+        "title": "iSolarCloud autorisieren",
+        "description": "1. Diese URL im Browser öffnen:\n   **{auth_url}**\n2. Anmelden und die App autorisieren.\n3. Den Autorisierungscode aus der Weiterleitungs-URL kopieren und unten einfügen.\n\n⚠ Der Code läuft nach ca. 5 Minuten ab.",
+        "data": {
+          "auth_code": "Autorisierungscode"
+        }
+      },
+      "modbus": {
+        "title": "Modbus-Verbindung",
+        "description": "Direktverbindung zum Sungrow-Wechselrichter konfigurieren.\n\nFür SSL/TLS: 'SSL verwenden' aktivieren und optional eine Zertifikatsdatei für selbstsignierte Zertifikate angeben.",
+        "data": {
+          "modbus_host": "Wechselrichter-IP-Adresse",
+          "modbus_connection": "Verbindungstyp",
+          "modbus_port": "Port",
+          "modbus_slave_id": "Slave ID",
+          "modbus_username": "WiNet-S Benutzername (Standard: admin)",
+          "modbus_password": "WiNet-S Passwort (Standard: pw8888)",
+          "modbus_use_ssl": "SSL/TLS verwenden",
+          "modbus_verify_ssl": "SSL-Zertifikat überprüfen",
+          "modbus_ssl_certfile": "SSL-Zertifikatsdatei (optional, für selbstsignierte)",
+          "modbus_scan_interval": "Modbus-Abfrageintervall (Sekunden)"
+        }
+      },
+      "ihm": {
+        "title": "iHomeManager (optional)",
+        "description": "Der Sungrow iHomeManager (iHM) liefert systemweite Leistungsflussdaten: Gesamtlast, Netzanschlusspunkt, Batterie-Aggregate. Aktivieren, wenn ein iHM im Netzwerk vorhanden ist.\n\nStandard-Slave-ID ist 247. Ports 502, 503 oder 504 möglich (jeweils nur 1 Verbindung).",
+        "data": {
+          "ihm_enabled": "iHomeManager aktivieren",
+          "ihm_host": "iHM-IP-Adresse",
+          "ihm_port": "Port",
+          "ihm_slave_id": "Slave ID",
+          "ihm_scan_interval": "iHM-Abfrageintervall (Sekunden)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung nicht möglich — Zugangsdaten oder Netzwerk überprüfen",
+      "invalid_auth": "Autorisierung fehlgeschlagen — Code möglicherweise abgelaufen",
+      "unknown": "Unerwarteter Fehler, Logs prüfen",
+      "missing_host": "IP-Adresse des Wechselrichters erforderlich"
+    },
+    "abort": {
+      "already_configured": "Dieses Sungrow-System ist bereits konfiguriert"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sungrow Optionen",
+        "data": {
+          "api_enabled": "iSolarCloud API aktivieren",
+          "api_scan_interval": "API-Abfrageintervall (Sekunden)",
+          "modbus_enabled": "Modbus (Wechselrichter) aktivieren",
+          "modbus_scan_interval": "Modbus-Abfrageintervall (Sekunden)",
+          "modbus_use_ssl": "SSL/TLS für Modbus",
+          "modbus_verify_ssl": "SSL-Zertifikat überprüfen",
+          "modbus_ssl_certfile": "SSL-Zertifikatsdatei",
+          "ihm_enabled": "iHomeManager aktivieren",
+          "ihm_host": "iHM-IP-Adresse",
+          "ihm_port": "iHM-Port",
+          "ihm_slave_id": "iHM-Slave-ID",
+          "ihm_scan_interval": "iHM-Abfrageintervall (Sekunden)"
+        }
+      }
+    }
+  }
+}

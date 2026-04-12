@@ -1,0 +1,89 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sungrow — Connection Mode",
+        "description": "Choose how to connect to your Sungrow inverter.\n\n**Both** (recommended): Uses the iSolarCloud API for historical data and Modbus for real-time readings.\n**API only**: Cloud-only, no local network access needed.\n**Modbus only**: LAN-only, no cloud account needed.",
+        "data": {
+          "mode": "Connection mode"
+        }
+      },
+      "api_credentials": {
+        "title": "iSolarCloud API Credentials",
+        "description": "Enter your iSolarCloud OAuth2 app credentials. Register at [{portal_url}]({portal_url}) (approval takes ~1-2 days).",
+        "data": {
+          "server": "Server region",
+          "app_key": "App Key",
+          "app_secret": "App Secret",
+          "application_id": "Application ID",
+          "redirect_uri": "Redirect URI",
+          "api_scan_interval": "API poll interval (seconds)"
+        }
+      },
+      "api_authorize": {
+        "title": "Authorize iSolarCloud",
+        "description": "1. Open this URL in your browser:\n   **{auth_url}**\n2. Log in and authorize the app.\n3. Copy the authorization code from the redirect URL and paste it below.\n\n⚠ The code expires in ~5 minutes.",
+        "data": {
+          "auth_code": "Authorization code"
+        }
+      },
+      "modbus": {
+        "title": "Modbus Connection",
+        "description": "Configure the direct connection to your Sungrow inverter.\n\nFor SSL/TLS: Enable 'Use SSL' and optionally provide a certificate file path for self-signed certificates. Leave 'Verify SSL' disabled for self-signed certs.",
+        "data": {
+          "modbus_host": "Inverter IP address",
+          "modbus_connection": "Connection type",
+          "modbus_port": "Port",
+          "modbus_slave_id": "Slave ID",
+          "modbus_username": "WiNet-S username (default: admin)",
+          "modbus_password": "WiNet-S password (default: pw8888)",
+          "modbus_use_ssl": "Use SSL/TLS",
+          "modbus_verify_ssl": "Verify SSL certificate",
+          "modbus_ssl_certfile": "SSL certificate file (optional, for self-signed)",
+          "modbus_scan_interval": "Modbus poll interval (seconds)"
+        }
+      },
+      "ihm": {
+        "title": "iHomeManager (optional)",
+        "description": "The Sungrow iHomeManager (iHM) provides system-wide power flow data: total load, grid connection point, battery aggregates. Enable this if you have an iHM on your network.\n\nDefault slave ID is 247. Ports 502, 503, or 504 may be used (each supports only 1 connection).",
+        "data": {
+          "ihm_enabled": "Enable iHomeManager",
+          "ihm_host": "iHM IP address",
+          "ihm_port": "Port",
+          "ihm_slave_id": "Slave ID",
+          "ihm_scan_interval": "iHM poll interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect — check credentials or network",
+      "invalid_auth": "Authorization failed — code may be expired",
+      "unknown": "Unexpected error, check logs",
+      "missing_host": "Inverter IP address is required"
+    },
+    "abort": {
+      "already_configured": "This Sungrow system is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sungrow Options",
+        "data": {
+          "api_enabled": "Enable iSolarCloud API",
+          "api_scan_interval": "API poll interval (seconds)",
+          "modbus_enabled": "Enable Modbus (Inverter)",
+          "modbus_scan_interval": "Modbus poll interval (seconds)",
+          "modbus_use_ssl": "Use SSL/TLS for Modbus",
+          "modbus_verify_ssl": "Verify SSL certificate",
+          "modbus_ssl_certfile": "SSL certificate file path",
+          "ihm_enabled": "Enable iHomeManager",
+          "ihm_host": "iHM IP address",
+          "ihm_port": "iHM port",
+          "ihm_slave_id": "iHM slave ID",
+          "ihm_scan_interval": "iHM poll interval (seconds)"
+        }
+      }
+    }
+  }
+}

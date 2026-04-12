@@ -1,0 +1,14 @@
+{
+  "domain": "sungrow",
+  "name": "Sungrow Inverter",
+  "codeowners": ["@Cyber40014"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/Cyber40014/sungrow-solarcloud-haos-integration",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Cyber40014/sungrow-solarcloud-haos-integration/issues",
+  "requirements": [
+    "pysolarcloud>=0.4.0"
+  ],
+  "version": "1.0.0-beta"
+}
