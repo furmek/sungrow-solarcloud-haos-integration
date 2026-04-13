@@ -223,11 +223,19 @@ Some registers don't return data on certain inverter models. This is a hardware 
 ### "Last Poll" shows Unavailable
 Ensure you have the latest version. The Last Poll sensors require `datetime` objects (fixed in v1.0.0-beta).
 
-## Credits
+## Credits & Third-Party Licenses
 
-This integration was built by combining ideas and protocol knowledge from:
-- [hacs-sungrow-home](https://github.com/Cyber40014/hacs-sungrow-home) — iSolarCloud OAuth2 API + MQTT
-- [SunGather](https://github.com/bohdan-s/SunGather) — Modbus TCP register maps
+This integration uses or was inspired by the following projects:
+
+| Project | License | Usage |
+|---------|---------|-------|
+| [pysolarcloud](https://github.com/bugjam/pysolarcloud) | MIT | iSolarCloud OAuth2 API client library (runtime dependency) |
+| [SunGather](https://github.com/bohdan-s/SunGather) | GPL-3.0 | Modbus TCP register maps (reference only, no code copied) |
+| [hacs-sungrow-home](https://github.com/Cyber40014/hacs-sungrow-home) | — | iSolarCloud API + MQTT approach (predecessor project) |
+
+Home Assistant core dependencies (not bundled with this integration):
+- [aiohttp](https://github.com/aio-libs/aiohttp) — Apache-2.0 / MIT — async HTTP client
+- [voluptuous](https://github.com/alecthomas/voluptuous) — BSD-3-Clause — config schema validation
 
 ## License
 
