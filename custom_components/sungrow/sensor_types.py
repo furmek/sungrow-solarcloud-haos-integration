@@ -650,6 +650,22 @@ MODBUS_SENSORS: tuple[SungrowSensorDescription, ...] = (
         source=SOURCE_MODBUS,
     ),
     SungrowSensorDescription(
+        key="mb_daily_battery_charge",
+        name="Daily Battery Charge (Modbus)",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        source=SOURCE_MODBUS,
+    ),
+    SungrowSensorDescription(
+        key="mb_total_battery_charge",
+        name="Total Battery Charge (Modbus)",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        source=SOURCE_MODBUS,
+    ),
+    SungrowSensorDescription(
         key="mb_daily_direct_consumption",
         name="Daily Direct Consumption (Modbus)",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
