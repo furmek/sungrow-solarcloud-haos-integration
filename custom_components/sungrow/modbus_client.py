@@ -106,6 +106,8 @@ REGISTERS_ENERGY: list[ModbusReg] = [
     ModbusReg("mb_total_direct_consumption",        13017, 2, "u32", 0.1, "kWh"),
     ModbusReg("mb_daily_battery_discharge",         13025, 1, "u16", 0.1, "kWh"),
     ModbusReg("mb_total_battery_discharge",         13026, 2, "u32", 0.1, "kWh"),
+    ModbusReg("mb_daily_battery_charge",            13039, 1, "u16", 0.1, "kWh"),
+    ModbusReg("mb_total_battery_charge",            13040, 2, "u32", 0.1, "kWh"),
 ]
 
 REGISTERS_STATUS: list[ModbusReg] = [
