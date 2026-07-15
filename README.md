@@ -176,6 +176,8 @@ The integration creates up to **three separate devices** in Home Assistant, depe
 | Battery SOC (iHM) | % | Aggregated battery SOC |
 | Grid Import/Export Energy (iHM) | kWh | Energy totals |
 | Charger Status (iHM) | — | Idle, Standby, Charging, Completed |
+| EV Charging Power (iHM) | W | Instantaneous AC22E-01 charging power (sum of charger phase powers) |
+| EV Total Energy Consumed (iHM) | kWh | Running total derived from EV charging power over time |
 | iHM Last Poll | timestamp | Last successful poll |
 | *...and more* | | |
 
@@ -206,6 +208,7 @@ Sensitive fields (tokens, passwords, secrets) are automatically redacted.
 
 - **Load Power (Modbus)**: Register 13007 returns 0 on SH15T — this data comes from the iHomeManager, not the inverter. Use the iHM or API for load power.
 - **Meter registers**: Registers 5600-5606 may return 0 depending on your meter setup.
+- **EV total energy consumed (iHM)**: Currently derived from integrated charger power; it resets when Home Assistant restarts.
 - **iSolarCloud latency**: The API typically refreshes data every ~5 minutes on the backend, regardless of how frequently you poll.
 - **iHM single connection**: Each iHM port (502/503/504) supports only 1 concurrent TCP connection.
 

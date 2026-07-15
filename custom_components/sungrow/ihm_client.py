@@ -98,10 +98,19 @@ REGISTERS_BATTERY: list[IHMReg] = [
     IHMReg("ihm_charger_status",          8552, 1, "u16"),
 ]
 
+# --- Charger / meter phase power (iHM protocol section 8552+) ---
+REGISTERS_CHARGER: list[IHMReg] = [
+    # AC22E-01 charging power can be derived from the per-phase active powers.
+    IHMReg("ihm_meter_phase_a_active_power", 8559, 2, "i32", 1.0, "W"),
+    IHMReg("ihm_meter_phase_b_active_power", 8561, 2, "i32", 1.0, "W"),
+    IHMReg("ihm_meter_phase_c_active_power", 8563, 2, "i32", 1.0, "W"),
+]
+
 ALL_REGISTERS: list[IHMReg] = (
     REGISTERS_INFO
     + REGISTERS_POWER
     + REGISTERS_BATTERY
+    + REGISTERS_CHARGER
 )
 
 # --- Holding registers for future expansion (read-write, not implemented) ---
@@ -229,6 +238,9 @@ class IHMClient:
         self._timeout = timeout
         self._transaction_id = 0
         self._last_read_time: float = 0.0
+        self._ev_total_energy_kwh: float = 0.0
+        self._last_ev_power_w: float | None = None
+        self._last_ev_ts: float | None = None
 
     async def _enforce_min_interval(self) -> None:
         """Ensure at least 1 second between reads (iHM protocol requirement)."""
@@ -305,6 +317,25 @@ class IHMClient:
             "iHM read %d/%d registers from %s (%d unavailable)",
             len(data), len(ALL_REGISTERS), self._host, errors,
         )
+
+        # Derive EV charger metrics from charger-related input registers.
+        # Instantaneous charger power: sum of 3 phase active powers, clamped to >= 0.
+        phase_a = data.get("ihm_meter_phase_a_active_power")
+        phase_b = data.get("ihm_meter_phase_b_active_power")
+        phase_c = data.get("ihm_meter_phase_c_active_power")
+        if phase_a is not None and phase_b is not None and phase_c is not None:
+            ev_power_w = max(0.0, float(phase_a) + float(phase_b) + float(phase_c))
+            data["ihm_ev_charging_power"] = round(ev_power_w, 3)
+
+            # Total EV energy is integrated from instantaneous charging power.
+            now_ts = time.monotonic()
+            if self._last_ev_ts is not None and self._last_ev_power_w is not None:
+                dt_h = max(0.0, (now_ts - self._last_ev_ts) / 3600.0)
+                self._ev_total_energy_kwh += max(0.0, self._last_ev_power_w) / 1000.0 * dt_h
+            self._last_ev_ts = now_ts
+            self._last_ev_power_w = ev_power_w
+            data["ihm_ev_total_energy_consumed"] = round(self._ev_total_energy_kwh, 3)
+
         return data
 
     async def async_test_connection(self) -> tuple[bool, str]:
