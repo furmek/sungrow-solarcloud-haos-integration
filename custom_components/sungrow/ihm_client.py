@@ -279,6 +279,16 @@ class IHMClient:
         self._last_read_time = time.monotonic()
         return _parse_response(response, reg.count)
 
+    def restore_ev_total_energy(self, total_energy_kwh: float) -> None:
+        """Restore derived EV total energy from persisted HA state."""
+        if total_energy_kwh < 0:
+            return
+        self._ev_total_energy_kwh = round(total_energy_kwh, 3)
+        # Reset integration baseline; next sample establishes a fresh start point.
+        self._last_ev_power_w = None
+        self._last_ev_ts = None
+        _LOGGER.debug("Restored EV total energy to %.3f kWh", self._ev_total_energy_kwh)
+
     async def async_get_data(self) -> dict[str, Any]:
         """Read all iHM registers and return a flat dict."""
         try:
