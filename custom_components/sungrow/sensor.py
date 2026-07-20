@@ -13,7 +13,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
@@ -95,7 +94,7 @@ async def async_setup_entry(
         _LOGGER.warning("No sensor entities created — check configuration mode")
 
 
-class SungrowSensor(CoordinatorEntity, SensorEntity, RestoreEntity):
+class SungrowSensor(CoordinatorEntity, SensorEntity):
     """A Sungrow sensor entity backed by a coordinator."""
 
     entity_description: SungrowSensorDescription
@@ -113,46 +112,6 @@ class SungrowSensor(CoordinatorEntity, SensorEntity, RestoreEntity):
         self._entry = entry
         self._source = source
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-        self._restored_native_value: Any | None = None
-
-    async def async_added_to_hass(self) -> None:
-        """Handle entity addition and restore persisted state when needed."""
-        await super().async_added_to_hass()
-
-        if self.entity_description.key != "ihm_ev_total_energy_consumed":
-            return
-        if self._source != "ihm":
-            return
-
-        last_state = await self.async_get_last_state()
-        if last_state is None or last_state.state in ("unknown", "unavailable", "none"):
-            return
-
-        try:
-            restored = float(last_state.state)
-        except (TypeError, ValueError):
-            _LOGGER.debug(
-                "Skipping EV total energy restore, invalid state: %s",
-                last_state.state,
-            )
-            return
-
-        if restored < 0:
-            _LOGGER.debug("Skipping EV total energy restore, negative state: %.3f", restored)
-            return
-
-        self._restored_native_value = round(restored, 3)
-
-        # Initialize integration-side accumulator so runtime integration continues
-        # from the last persisted total.
-        restore_method = getattr(self.coordinator, "restore_ev_total_energy", None)
-        if callable(restore_method):
-            restore_method(self._restored_native_value)
-            _LOGGER.debug(
-                "Restored EV total energy for %s to %.3f kWh",
-                self.entity_id,
-                self._restored_native_value,
-            )
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -197,8 +156,6 @@ class SungrowSensor(CoordinatorEntity, SensorEntity, RestoreEntity):
             return None
         flat = self.coordinator.data.get("flat", {})
         value = flat.get(self.entity_description.key)
-        if value is None and self.entity_description.key == "ihm_ev_total_energy_consumed":
-            value = self._restored_native_value
         if value is None:
             return None
         if self.entity_description.convert is not None:

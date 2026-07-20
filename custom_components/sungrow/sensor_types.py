@@ -697,6 +697,23 @@ MODBUS_SENSORS: tuple[SungrowSensorDescription, ...] = (
         state_class=SensorStateClass.TOTAL_INCREASING,
         source=SOURCE_MODBUS,
     ),
+    SungrowSensorDescription(
+        key="mb_ev_charging_power",
+        name="EV Charging Power",
+        native_unit_of_measurement=UnitOfPower.WATT,
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        source=SOURCE_MODBUS,
+    ),
+    SungrowSensorDescription(
+        key="mb_ev_total_energy",
+        name="EV Total Energy Consumed",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        source=SOURCE_MODBUS,
+        convert=_wh_to_kwh,
+    ),
 
     # --- Status ---
     SungrowSensorDescription(
@@ -861,22 +878,6 @@ IHM_SENSORS: tuple[SungrowSensorDescription, ...] = (
         name="Charger Status (iHM)",
         source=SOURCE_IHM,
         entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    SungrowSensorDescription(
-        key="ihm_ev_charging_power",
-        name="EV Charging Power (iHM)",
-        native_unit_of_measurement=UnitOfPower.WATT,
-        device_class=SensorDeviceClass.POWER,
-        state_class=SensorStateClass.MEASUREMENT,
-        source=SOURCE_IHM,
-    ),
-    SungrowSensorDescription(
-        key="ihm_ev_total_energy_consumed",
-        name="EV Total Energy Consumed (iHM)",
-        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-        device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
-        source=SOURCE_IHM,
     ),
 
     # --- Last poll ---

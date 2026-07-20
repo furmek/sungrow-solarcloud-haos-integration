@@ -110,6 +110,13 @@ REGISTERS_ENERGY: list[ModbusReg] = [
     ModbusReg("mb_total_battery_charge",            13040, 2, "u32", 0.1, "kWh"),
 ]
 
+# --- EV charger (AC22E-01 family) ---
+REGISTERS_EV_CHARGER: list[ModbusReg] = [
+    # Source: Sungrow AC007/AC011E/AC22E wallbox map
+    ModbusReg("mb_ev_charging_power", 21307, 2, "u32", 1.0, "W"),
+    ModbusReg("mb_ev_total_energy",   21299, 2, "u32", 1.0, "Wh"),
+]
+
 REGISTERS_STATUS: list[ModbusReg] = [
     ModbusReg("mb_inverter_temperature", 5007, 1, "i16", 0.1, "°C"),
     ModbusReg("mb_running_state",       12999, 1, "u16", 1.0),
@@ -122,6 +129,7 @@ ALL_REGISTERS: list[ModbusReg] = (
     + REGISTERS_MPPT
     + REGISTERS_GRID
     + REGISTERS_ENERGY
+    + REGISTERS_EV_CHARGER
     + REGISTERS_STATUS
 )
 
