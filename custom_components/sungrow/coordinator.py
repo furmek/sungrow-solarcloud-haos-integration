@@ -187,6 +187,13 @@ class SungrowIHMCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._consecutive_errors = 0
         self._last_good_data: dict[str, Any] | None = None
 
+    def restore_ev_total_energy(self, total_energy_kwh: float) -> None:
+        """Restore EV total energy into iHM client integration state."""
+        self._client.restore_ev_total_energy(total_energy_kwh)
+        if self._last_good_data is not None:
+            flat = self._last_good_data.get("flat", {})
+            flat["ihm_ev_total_energy_consumed"] = round(total_energy_kwh, 3)
+
     async def _async_update_data(self) -> dict[str, Any]:
         start = time.monotonic()
         try:
