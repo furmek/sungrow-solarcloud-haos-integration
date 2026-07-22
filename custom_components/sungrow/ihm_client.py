@@ -95,7 +95,7 @@ REGISTERS_BATTERY: list[IHMReg] = [
     IHMReg("ihm_max_discharge_power",     8153, 1, "u16", 0.1, "kW"),
     IHMReg("ihm_battery_power",           8161, 2, "i32", 0.01, "kW"),
     IHMReg("ihm_battery_soc",             8163, 1, "u16", 0.1, "%"),
-    IHMReg("ihm_ev_charger_power",        8048, 1, "u16", 1.0, "W"),
+    IHMReg("ihm_ev_charger_power",        8593, 2, "u32", 1.0, "W"),
     IHMReg("ihm_charger_status",          8552, 1, "u16"),
 ]
 
@@ -115,8 +115,7 @@ ALL_REGISTERS: list[IHMReg] = (
 # block read and split into per-register ihm_raw_register_<addr> values.
 # Temporary diagnostic aid - remove once the useful registers are identified.
 RAW_EXPLORE_RANGES: tuple[tuple[int, int], ...] = (
-    (8176, 8230),
-    (8550, 8600),
+    (8590, 8650),
 )
 
 # --- Holding registers for future expansion (read-write, not implemented) ---
