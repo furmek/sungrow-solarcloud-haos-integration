@@ -862,6 +862,14 @@ IHM_SENSORS: tuple[SungrowSensorDescription, ...] = (
         source=SOURCE_IHM,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    SungrowSensorDescription(
+        key="ihm_ev_charger_power",
+        name="EV Charger Power Draw (iHM)",
+        native_unit_of_measurement=UnitOfPower.WATT,
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        source=SOURCE_IHM,
+    ),
 
     # --- Last poll ---
     SungrowSensorDescription(
