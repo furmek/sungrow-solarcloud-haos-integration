@@ -162,8 +162,6 @@ The integration creates up to **three separate devices** in Home Assistant, depe
 | MPPT1/2/3 Voltage & Current | V, A | Per-string PV data |
 | Inverter Temperature | °C | Internal temperature |
 | Daily/Total PV Generation | kWh | Energy counters |
-| EV Charging Power | W | AC22E-01 charging power (register 21307) |
-| EV Total Energy Consumed | kWh | AC22E-01 total energy (register 21299, Wh converted to kWh) |
 | Modbus Last Poll | timestamp | Last successful poll |
 | *...and more* | | |
 
@@ -208,7 +206,6 @@ Sensitive fields (tokens, passwords, secrets) are automatically redacted.
 
 - **Load Power (Modbus)**: Register 13007 returns 0 on SH15T — this data comes from the iHomeManager, not the inverter. Use the iHM or API for load power.
 - **Meter registers**: Registers 5600-5606 may return 0 depending on your meter setup.
-- **EV charger registers**: AC22E-01 metrics use Modbus registers 21307 (charging power) and 21299 (total energy). If your charger is a separate slave (usually 3), set the Modbus slave ID accordingly.
 - **iSolarCloud latency**: The API typically refreshes data every ~5 minutes on the backend, regardless of how frequently you poll.
 - **iHM single connection**: Each iHM port (502/503/504) supports only 1 concurrent TCP connection.
 

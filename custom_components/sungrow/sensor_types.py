@@ -30,6 +30,8 @@ from homeassistant.const import (
     PERCENTAGE,
 )
 
+from .ihm_client import RAW_EXPLORE_RANGES
+
 # Source constants
 SOURCE_API = "api"
 SOURCE_MODBUS = "modbus"
@@ -697,23 +699,6 @@ MODBUS_SENSORS: tuple[SungrowSensorDescription, ...] = (
         state_class=SensorStateClass.TOTAL_INCREASING,
         source=SOURCE_MODBUS,
     ),
-    SungrowSensorDescription(
-        key="mb_ev_charging_power",
-        name="EV Charging Power",
-        native_unit_of_measurement=UnitOfPower.WATT,
-        device_class=SensorDeviceClass.POWER,
-        state_class=SensorStateClass.MEASUREMENT,
-        source=SOURCE_MODBUS,
-    ),
-    SungrowSensorDescription(
-        key="mb_ev_total_energy",
-        name="EV Total Energy Consumed",
-        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-        device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
-        source=SOURCE_MODBUS,
-        convert=_wh_to_kwh,
-    ),
 
     # --- Status ---
     SungrowSensorDescription(
@@ -879,6 +864,14 @@ IHM_SENSORS: tuple[SungrowSensorDescription, ...] = (
         source=SOURCE_IHM,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    SungrowSensorDescription(
+        key="ihm_ev_charger_power",
+        name="EV Charger Power Draw (iHM)",
+        native_unit_of_measurement=UnitOfPower.WATT,
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        source=SOURCE_IHM,
+    ),
 
     # --- Last poll ---
     SungrowSensorDescription(
@@ -888,3 +881,25 @@ IHM_SENSORS: tuple[SungrowSensorDescription, ...] = (
         source=SOURCE_IHM,
     ),
 )
+
+
+# ---------------------------------------------------------------------------
+# Exploratory raw iHM register sensors (diagnostic)
+# ---------------------------------------------------------------------------
+# One sensor per register in the RAW_EXPLORE_RANGES block reads. Values are
+# raw unsigned 16-bit words (no unit / device class). Watch these during a
+# charging session to spot registers that change; a u32 counter appears as
+# two adjacent registers incrementing together. Remove once identified.
+_IHM_RAW_EXPLORE_SENSORS: tuple[SungrowSensorDescription, ...] = tuple(
+    SungrowSensorDescription(
+        key=f"ihm_raw_register_{addr}",
+        name=f"iHM Raw Register {addr}",
+        state_class=SensorStateClass.MEASUREMENT,
+        source=SOURCE_IHM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    )
+    for _start, _end in RAW_EXPLORE_RANGES
+    for addr in range(_start, _end + 1)
+)
+
+IHM_SENSORS = IHM_SENSORS + _IHM_RAW_EXPLORE_SENSORS

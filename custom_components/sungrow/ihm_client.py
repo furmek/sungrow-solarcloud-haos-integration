@@ -95,6 +95,7 @@ REGISTERS_BATTERY: list[IHMReg] = [
     IHMReg("ihm_max_discharge_power",     8153, 1, "u16", 0.1, "kW"),
     IHMReg("ihm_battery_power",           8161, 2, "i32", 0.01, "kW"),
     IHMReg("ihm_battery_soc",             8163, 1, "u16", 0.1, "%"),
+    IHMReg("ihm_ev_charger_power",        8048, 1, "u16", 1.0, "W"),
     IHMReg("ihm_charger_status",          8552, 1, "u16"),
 ]
 
@@ -102,6 +103,20 @@ ALL_REGISTERS: list[IHMReg] = (
     REGISTERS_INFO
     + REGISTERS_POWER
     + REGISTERS_BATTERY
+)
+
+
+# ---------------------------------------------------------------------------
+# Exploratory raw register scan
+# ---------------------------------------------------------------------------
+# Contiguous input-register ranges (spec / 1-indexed addresses, inclusive)
+# read as raw u16 to hunt for undocumented counters such as an EV charger
+# accumulated-energy register. Each range is fetched in a single FC 0x04
+# block read and split into per-register ihm_raw_register_<addr> values.
+# Temporary diagnostic aid - remove once the useful registers are identified.
+RAW_EXPLORE_RANGES: tuple[tuple[int, int], ...] = (
+    (8176, 8230),
+    (8550, 8600),
 )
 
 # --- Holding registers for future expansion (read-write, not implemented) ---
@@ -267,6 +282,43 @@ class IHMClient:
         self._last_read_time = time.monotonic()
         return _parse_response(response, reg.count)
 
+    async def _read_raw_block(
+        self,
+        reader: asyncio.StreamReader,
+        writer: asyncio.StreamWriter,
+        start_address: int,
+        count: int,
+    ) -> list[int] | None:
+        """Read a contiguous block of input registers in one request.
+
+        start_address is a 1-indexed spec address; the block spans
+        count registers. Used by the exploratory raw register scan.
+        """
+        await self._enforce_min_interval()
+
+        self._transaction_id = (self._transaction_id + 1) & 0xFFFF
+        wire_address = start_address - 1
+
+        request = _build_read_request(
+            self._transaction_id, self._slave_id, wire_address, count
+        )
+        writer.write(request)
+        await writer.drain()
+
+        try:
+            response = await asyncio.wait_for(
+                reader.read(512), timeout=self._timeout
+            )
+        except asyncio.TimeoutError:
+            _LOGGER.debug(
+                "Timeout reading iHM raw block %d..%d",
+                start_address, start_address + count - 1,
+            )
+            return None
+
+        self._last_read_time = time.monotonic()
+        return _parse_response(response, count)
+
     async def async_get_data(self) -> dict[str, Any]:
         """Read all iHM registers and return a flat dict."""
         try:
@@ -294,6 +346,17 @@ class IHMClient:
                         errors += 1
                 else:
                     errors += 1
+
+            for _start, _end in RAW_EXPLORE_RANGES:
+                block_count = _end - _start + 1
+                words = await self._read_raw_block(
+                    reader, writer, _start, block_count
+                )
+                if words is None:
+                    errors += block_count
+                    continue
+                for offset, word in enumerate(words):
+                    data[f"ihm_raw_register_{_start + offset}"] = word
         finally:
             writer.close()
             try:
@@ -305,7 +368,6 @@ class IHMClient:
             "iHM read %d/%d registers from %s (%d unavailable)",
             len(data), len(ALL_REGISTERS), self._host, errors,
         )
-
         return data
 
     async def async_test_connection(self) -> tuple[bool, str]:
