@@ -115,16 +115,11 @@ ALL_REGISTERS: list[IHMReg] = (
 # block read and split into per-register ihm_raw_register_<addr> values.
 # Temporary diagnostic aid - remove once the useful registers are identified.
 RAW_EXPLORE_RANGES: tuple[tuple[int, int], ...] = (
-    (8000, 8099),
-    (8100, 8199),
-    (8200, 8299),
-    (8300, 8399),
-    (8400, 8499),
-    (8500, 8599),
-    (8600, 8699),
-    (8700, 8799),
-    (8800, 8899),
-    (8900, 8999),
+    (8000, 8005),
+    (8145, 8178),
+    (8318, 8332),
+    (8552, 8592),
+    (8645, 8657),
 )
 
 # --- Holding registers for future expansion (read-write, not implemented) ---
